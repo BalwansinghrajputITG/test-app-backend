@@ -1,6 +1,10 @@
 const { default: mongoose } = require("mongoose");
 
 const answersschems = mongoose.Schema({
+  Email : {
+    type : String,
+    required : true,
+  },
   SubmitAnswers: [
     {
       QuestionID: {
