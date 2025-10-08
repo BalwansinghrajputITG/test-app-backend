@@ -1,7 +1,8 @@
-const mongoConnect = require("./db/db");
+
 const express = require("express");
 const app = express();
+app.use(express.json())
 
-mongoConnect();
+
 
 module.exports = app;
