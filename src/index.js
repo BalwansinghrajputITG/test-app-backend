@@ -30,7 +30,6 @@ mongoose.connect(process.env.DATABASE_URL).then(()=>{
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const authRouter = require("./routes/authRouter");
-const app = express();
 app.use(cookieParser());
 app.use(express.json());
 
@@ -44,4 +43,4 @@ app.use(express.json())
 
 
 module.exports = app;
->>>>>>> c1103f8e950f2b6c15d051dd33ad7d3b2e9e6068
+
