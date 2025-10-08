@@ -16,8 +16,8 @@ const Question = mongoose.Schema({
       AnswerID: { type: String, require: true, unique: true },
       Answer: {
         type: String,
-        require: true,
-      },
+        required: true,
+      }
     },
   ],
   CorrectAnswerID: {
