@@ -1,4 +1,3 @@
-const type = require("cla/lib/type");
 const { default: mongoose } = require("mongoose");
 
 const Question = mongoose.Schema({
@@ -13,10 +12,10 @@ const Question = mongoose.Schema({
   },
   Answers: [
     {
-      AnswerID: { type: String, require: true, unique: true },
+      AnswerID: { type: String, required: true, unique: true },
       Answer: {
         type: String,
-        require: true,
+        required: true,
       },
     },
   ],
