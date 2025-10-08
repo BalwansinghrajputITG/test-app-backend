@@ -41,6 +41,7 @@ exports.registerUser = async (req, res) => {
     userData: {
       _id: newUser._id,
       email: newUser.email,
+      fullName: newUser.fullName,
       userClass: newUser.userClass,
       token,
     },
@@ -82,6 +83,7 @@ exports.loginUser = async (req, res) => {
     userData: {
       _id: myUser._id,
       email: myUser.email,
+      fullName: myUser.fullName,
       userClass: myUser.userClass,
       token,
     },
