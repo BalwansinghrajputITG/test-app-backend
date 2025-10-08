@@ -10,9 +10,9 @@ require("dotenv").config();
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.json());
-
+ 
 app.use("/api/auth/user", authRouter);
 app.use("/question" , questionRouter);
 app.use(express.json());
-
+ 
 module.exports = app;
