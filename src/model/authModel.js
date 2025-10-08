@@ -24,6 +24,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    scoreHistory: [{ score: { type: Number }, required: true }],
   },
   {
     timestamps: true,
