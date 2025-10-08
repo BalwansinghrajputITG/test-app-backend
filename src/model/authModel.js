@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema(
+const userSchema =  mongoose.Schema(
   {
     fullName: {
       type: String,
@@ -24,6 +24,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    scoreHistory: [
+  {
+    score: { type: Number, required: true },
+  },
+],
   },
   {
     timestamps: true,
