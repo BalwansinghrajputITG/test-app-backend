@@ -1,5 +1,7 @@
 const app = require("./src/index");
 const mongoConnect = require("./src/db/db");
+mongoConnect();
+
 
 const PORT = 3000;
 
