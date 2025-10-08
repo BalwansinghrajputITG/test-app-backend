@@ -5,14 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "dev": "npx nodemon server.js"
+    "start": "npx nodemon server.js",
+    "dev": "npm server.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/BalwansinghrajputITG/test-app-backend.git"
   },
-  "author": "",
+  "author": "Full Stacks",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/BalwansinghrajputITG/test-app-backend/issues"

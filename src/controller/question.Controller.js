@@ -10,7 +10,7 @@ const getAllQuestions = async (req, res, next) => {
     res.status(200).json(Questions);
     console.log(Questions);
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
 const getQuestionByID = async (req, res, next) => {
@@ -32,6 +32,8 @@ const getQuestionByID = async (req, res, next) => {
       });
     }
     return res.status(200).json(ans_id);
-  } catch (error) {}
+  } catch (error) {
+    next(error);
+  }
 };
 module.exports = { getAllQuestions, getQuestionByID };
