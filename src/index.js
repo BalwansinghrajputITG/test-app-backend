@@ -1,45 +1,38 @@
+const express = require("express");
 
-const express = require('express');
+const { default: mongoose } = require("mongoose");
 
-const {default:mongoose} = require('mongoose');
+const DashboardRouter = require("./routes/dashboardRoutes");
+const cookieParser = require("cookie-parser");
+const authRouter = require("./routes/authRouter");
+const questionRouter = require("./routes/questionRouter");
+const cors = require("cors");
 
-const DashboardRouter = require('./routes/dashboardRoutes');
-
-require('dotenv').config();
+require("dotenv").config();
 
 const app = express();
 
 app.use(express.json());
 
-app.get("/",(req,res)=>{
-    res.json({msg:"question get successfully"})
-})    
+app.get("/", (req, res) => {
+  res.json({ msg: "URL is missing something" });
+});
 
-app.use('/dashboard',DashboardRouter);
+app.use("/dashboard", DashboardRouter);
 
-mongoose.connect(process.env.DATABASE_URL).then(()=>{
+mongoose
+  .connect(process.env.DATABASE_URL)
+  .then(() => {
+    console.log("DB connected");
+  })
+  .catch((e) => {
+    console.log(e, "db not connected");
+  });
 
-
-
-}).catch((e)=>{
-  next(e)
-})
-
-
-const express = require("express");
-const cookieParser = require("cookie-parser");
-const authRouter = require("./routes/authRouter");
+app.use(cors());
 app.use(cookieParser());
-app.use(express.json());
-
-// app.use("/", (req, res, next) => {
-//   res.send("hello word");
-// });
 
 app.use("/api/auth/user", authRouter);
-app.use(express.json())
-
-
+app.use("/question", questionRouter);
 
 module.exports = app;
-
