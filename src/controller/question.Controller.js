@@ -13,6 +13,9 @@ const getAllQuestions = async (req, res, next) => {
     next(error);
   }
 };
+
+//@desc get all question by id
+//route /id/<Q001> method get
 const getQuestionByID = async (req, res, next) => {
   try {
     const Q_id = req.params.id;

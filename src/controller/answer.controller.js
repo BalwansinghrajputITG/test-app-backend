@@ -1,8 +1,10 @@
-//@desc
-
+//@desc Post answers & and calcluate score correct answers
+// route post /submit_answer
+// access private
 const Ans = require("../model/answerModel");
 const UserModel = require("../model/authModel");
 const Que = require("../model/questionModel");
+
 // this function filter the answers and assign score to email
 async function setcorrect_answer(s_ans) {
   const array_of_questions = await Que.find({}).lean();
@@ -19,7 +21,17 @@ async function setcorrect_answer(s_ans) {
   const currentScore = answers.length * 5;
   const saveScore = await UserModel.updateOne(
     { email: s_ans.Email },
-    { $push: { scoreHistory: { score: currentScore } } }
+    {
+      $push: {
+        scoreHistory: {
+          questionAttempt: {
+            correctAnswers: answers.length,
+            attempt: s_ans.SubmitAnswers.length,
+          },
+          score: currentScore,
+        },
+      },
+    }
   );
   // send all user data
   return {
@@ -37,7 +49,7 @@ const submitAnswers = async (req, res, next) => {
     const s_ans = await ans_.save();
     res.status(200).json({
       message: "your answer submited successfully",
-      answers: req.body,
+      Submits: req.body.SubmitAnswers.length,
     });
   } catch (error) {
     next(error);

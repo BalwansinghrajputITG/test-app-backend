@@ -1,6 +1,7 @@
+const type = require("cla/lib/type");
 const mongoose = require("mongoose");
 
-const userSchema =  mongoose.Schema(
+const userSchema = mongoose.Schema(
   {
     fullName: {
       type: String,
@@ -25,10 +26,24 @@ const userSchema =  mongoose.Schema(
       required: true,
     },
     scoreHistory: [
-  {
-    score: { type: Number, required: true },
-  },
-],
+      {
+        questionAttempt: {
+          correctAnswers: {
+            type: Number,
+            required: true,
+          },
+          attempt: {
+            type: Number,
+            required: true,
+          },
+        },
+        score: { type: Number, required: true },
+        submitedON: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   {
     timestamps: true,
