@@ -85,6 +85,7 @@ exports.loginUser = async (req, res) => {
       email: myUser.email,
       fullName: myUser.fullName,
       userClass: myUser.userClass,
+      scoreHistory: myUser.scoreHistory,
       token,
     },
   });
@@ -119,6 +120,7 @@ exports.dashboard = async (req, res) => {
       userClass: myUser.userClass,
       scoreHistory: myUser.scoreHistory,
       phoneNumber: myUser.phoneNumber,
+      role: myUser.role,
     },
   });
 };
