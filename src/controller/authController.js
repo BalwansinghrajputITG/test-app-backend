@@ -6,140 +6,125 @@ require("dotenv").config();
 const jwtToken = process.env.JWT_S;
 
 exports.registerUser = async (req, res) => {
-  try {
-    const { fullName, email, phoneNumber, userClass, password } = req.body;
+  const { fullName, email, phoneNumber, userClass, password } = req.body;
 
-    const userEamilAllreadyExixt = await User.findOne({ email });
-    const userPhoneNumberAllreadyExixt = await User.findOne({ phoneNumber });
+  const userEamilAllreadyExixt = await User.findOne({ email });
+  const userPhoneNumberAllreadyExixt = await User.findOne({ phoneNumber });
 
-    if (userEamilAllreadyExixt || userPhoneNumberAllreadyExixt) {
-      return res.status(400).json({
-        msg: "user allready esixt",
-      });
-    }
-
-    const hashPassword = await bcrypt.hash(password, 10);
-
-    const newUser = await User.create({
-      fullName,
-      email,
-      phoneNumber,
-      userClass,
-      password: hashPassword,
+  if (userEamilAllreadyExixt || userPhoneNumberAllreadyExixt) {
+    return res.status(400).json({
+      msg: "user allready esixt",
     });
-
-    const token = jwt.sign(
-      {
-        id: newUser._id,
-      },
-      jwtToken
-    );
-
-    res.cookie("token", token);
-
-    res.status(201).json({
-      msg: "user register successfully",
-      userData: {
-        _id: newUser._id,
-        email: newUser.email,
-        fullName: newUser.fullName,
-        userClass: newUser.userClass,
-        token,
-      },
-    });
-  } catch (error) {
-    next(error);
   }
+
+  const hashPassword = await bcrypt.hash(password, 10);
+
+  const newUser = await User.create({
+    fullName,
+    email,
+    phoneNumber,
+    userClass,
+    password: hashPassword,
+  });
+
+  const token = jwt.sign(
+    {
+      id: newUser._id,
+    },
+    jwtToken
+  );
+
+  res.cookie("token", token);
+
+  res.status(201).json({
+    msg: "user register successfully",
+    userData: {
+      _id: newUser._id,
+      email: newUser.email,
+      fullName: newUser.fullName,
+      userClass: newUser.userClass,
+      scoreHistory: newUser.scoreHistory,
+      token,
+    },
+  });
 };
 
 exports.loginUser = async (req, res) => {
-  try {
-    const { email, password } = req.body;
+  const { email, password } = req.body;
 
-    const myUser = await User.findOne({
-      email,
+  const myUser = await User.findOne({
+    email,
+  });
+
+  if (!myUser) {
+    return res.status(400).json({
+      msg: "invalid email or password",
     });
-
-    if (!myUser) {
-      return res.status(400).json({
-        msg: "invalid email or password",
-      });
-    }
-
-    const invalidPassword = await bcrypt.compare(password, myUser.password);
-
-    if (!invalidPassword) {
-      return res.status(400).json({
-        msg: "invalid email or password",
-      });
-    }
-
-    const token = jwt.sign(
-      {
-        id: myUser._id,
-      },
-      jwtToken
-    );
-
-    res.cookie("token", token);
-
-    res.status(201).json({
-      msg: "user login successfully",
-      userData: {
-        _id: myUser._id,
-        email: myUser.email,
-        fullName: myUser.fullName,
-        userClass: myUser.userClass,
-        scoreHistory: myUser.scoreHistory,
-        token,
-      },
-    });
-  } catch (error) {
-    next(error);
   }
+
+  const invalidPassword = await bcrypt.compare(password, myUser.password);
+
+  if (!invalidPassword) {
+    return res.status(400).json({
+      msg: "invalid email or password",
+    });
+  }
+
+  const token = jwt.sign(
+    {
+      id: myUser._id,
+    },
+    jwtToken
+  );
+
+  res.cookie("token", token);
+
+  res.status(201).json({
+    msg: "user login successfully",
+    userData: {
+      _id: myUser._id,
+      email: myUser.email,
+      fullName: myUser.fullName,
+      userClass: myUser.userClass,
+      scoreHistory: myUser.scoreHistory,
+      token,
+    },
+  });
 };
 
 exports.logOutUsre = async (req, res) => {
-  try {
-    res.clearCookie("token");
-    res.status(200).json({
-      msg: "user logout successfully",
-    });
-  } catch (error) {
-    next(error);
-  }
+  res.clearCookie("token");
+  res.status(200).json({
+    msg: "user logout successfully",
+  });
 };
 
 exports.dashboard = async (req, res) => {
-  try {
-    const { email } = req.body;
+  const { email } = req.body;
 
-    const myUser = await User.findOne({
-      email,
+  const myUser = await User.findOne({
+    email,
+  });
+
+  if (!myUser) {
+    return res.status(400).json({
+      msg: "user not valid",
     });
-
-    if (!myUser) {
-      return res.status(400).json({
-        msg: "user not valid",
-      });
-    }
-
-    res.status(201).json({
-      msg: "user data",
-      userData: {
-        _id: myUser._id,
-        email: myUser.email,
-        fullName: myUser.fullName,
-        userClass: myUser.userClass,
-        scoreHistory: myUser.scoreHistory,
-        phoneNumber: myUser.phoneNumber,
-        role: myUser.role,
-      },
-    });
-  } catch (error) {
-    next(error);
   }
+
+  res.status(201).json({
+    msg: "user data",
+    userData: {
+      _id: myUser._id,
+      email: myUser.email,
+      fullName: myUser.fullName,
+      userClass: myUser.userClass,
+      scoreHistory: myUser.scoreHistory,
+      phoneNumber: myUser.phoneNumber,
+    },
+  });
 };
+
 exports.UsersFetchingData = async (req, res, next) => {
   try {
     const { role } = req.body;
@@ -150,5 +135,64 @@ exports.UsersFetchingData = async (req, res, next) => {
     });
   } catch (error) {
     next(error);
+  }
+};
+
+exports.AddAdmin = async (req, res, next) => {
+  try {
+    const { fullName, email, phoneNumber, password } = req.body;
+
+    const userEamilAllreadyExixt = await User.findOne({ email });
+    const userPhoneNumberAllreadyExixt = await User.findOne({ phoneNumber });
+
+    if (userEamilAllreadyExixt || userPhoneNumberAllreadyExixt) {
+      return res.status(400).json({
+        msg: "Admin allready esixt",
+      });
+    }
+
+    const hashPassword = await bcrypt.hash(password, 10);
+
+    const newUser = await User.create({
+      fullName,
+      email,
+      phoneNumber,
+      userClass: 12,
+      password: hashPassword,
+      role: "admin",
+    });
+
+    res.status(201).json({
+      message: "Admin created successfully",
+      user: {
+        fullName: newUser.fullName,
+        email: newUser.email,
+        phoneNumber: newUser.phoneNumber,
+        role: newUser.role,
+        userClass: newUser.userClass,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.updateUser = async (req, res) => {
+  const { _id, ...updatedata } = req.body;
+  if (!_id) {
+    return res.status(400).json("Fiead Id is require for process");
+  }
+
+  try {
+    const updateUser = await User.findByIdAndUpdate(_id, updatedata, {
+      new: true,
+    });
+
+    if (!updateUser) {
+      return res.status(400).json({ message: "User Not Found" });
+    }
+    res.json(updateUser);
+  } catch (error) {
+    console.log(error);
   }
 };
