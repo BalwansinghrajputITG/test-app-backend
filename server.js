@@ -1,5 +1,4 @@
 
-
 const mongoConnect = require("./src/db/db");
 const errorHandler = require("./src/middleWare/errorHandler");
 const app = require('./src/index')
