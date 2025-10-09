@@ -1,12 +1,11 @@
 
-const app1 = require("./src");
+const app = require("./src/index");
 
-app1.listen(3000,()=>{ 
+app.listen(3000,()=>{ 
     
     console.log("site is started http://localhost:3000");
 })
 
-const app = require("./src/index");
 const mongoConnect = require("./src/db/db");
 mongoConnect();
 
@@ -19,4 +18,3 @@ mongoConnect();
 app.listen(PORT, () => {
   console.log(`server is running http://localhost:${PORT}`);
 });
-

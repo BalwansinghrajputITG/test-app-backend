@@ -54,5 +54,5 @@ exports.deleteDashboardData = async (req , res) => {
     } catch (error) {
         
     }
-
 }
+module.exports = {deleteDashboardData , fetchDashboardData , postDashboardData}

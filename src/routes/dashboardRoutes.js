@@ -4,6 +4,6 @@ const {getAllQuestions} = require('../controller/dashBoardController');
 
 const dashboardRouter = express.Router();
 
-dashboardRouter.get('/AllQuestions',getAllQuestions);
+dashboardRouter.get('/',getAllQuestions);
 
 module.exports = dashboardRouter;
