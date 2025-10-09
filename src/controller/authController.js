@@ -87,6 +87,7 @@ exports.loginUser = async (req, res) => {
       fullName: myUser.fullName,
       userClass: myUser.userClass,
       scoreHistory: myUser.scoreHistory,
+      role: myUser.role,
       token,
     },
   });
@@ -178,12 +179,13 @@ exports.AddAdmin = async (req, res, next) => {
 };
 
 exports.updateUser = async (req, res) => {
-  const { _id, ...updatedata } = req.body;
-  if (!_id) {
-    return res.status(400).json("Fiead Id is require for process");
-  }
-
   try {
+    const { _id, ...updatedata } = req.body;
+
+    if (!_id) {
+      return res.status(400).json("Fiead Id is require for process");
+    }
+
     const updateUser = await User.findByIdAndUpdate(_id, updatedata, {
       new: true,
     });
@@ -191,8 +193,11 @@ exports.updateUser = async (req, res) => {
     if (!updateUser) {
       return res.status(400).json({ message: "User Not Found" });
     }
-    res.json(updateUser);
+    res.json({
+      msg: "user updated successfully",
+      updateUser,
+    });
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
