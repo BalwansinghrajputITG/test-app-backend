@@ -1,4 +1,3 @@
-const type = require("cla/lib/type");
 const mongoose = require("mongoose");
 
 const userSchema = mongoose.Schema(

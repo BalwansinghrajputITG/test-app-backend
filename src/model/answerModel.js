@@ -1,4 +1,4 @@
-const type = require("cla/lib/type");
+
 const { default: mongoose } = require("mongoose");
 
 const answersschems = mongoose.Schema({

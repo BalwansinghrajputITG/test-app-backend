@@ -41,8 +41,8 @@ exports.registerUser = async (req, res) => {
     userData: {
       _id: newUser._id,
       email: newUser.email,
+      fullName: newUser.fullName,
       userClass: newUser.userClass,
-      fullName : newUser.fullName,
       token,
     },
   });
@@ -83,8 +83,8 @@ exports.loginUser = async (req, res) => {
     userData: {
       _id: myUser._id,
       email: myUser.email,
+      fullName: myUser.fullName,
       userClass: myUser.userClass,
-      fullName : myUser.fullName,
       token,
     },
   });
@@ -94,5 +94,31 @@ exports.logOutUsre = async (req, res) => {
   res.clearCookie("token");
   res.status(200).json({
     msg: "user logout successfully",
+  });
+};
+
+exports.dashboard = async (req, res) => {
+  const { email } = req.body;
+
+  const myUser = await User.findOne({
+    email,
+  });
+
+  if (!myUser) {
+    return res.status(400).json({
+      msg: "user not valid",
+    });
+  }
+
+  res.status(201).json({
+    msg: "user data",
+    userData: {
+      _id: myUser._id,
+      email: myUser.email,
+      fullName: myUser.fullName,
+      userClass: myUser.userClass,
+      scoreHistory: myUser.scoreHistory,
+      phoneNumber: myUser.phoneNumber,
+    },
   });
 };
