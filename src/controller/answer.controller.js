@@ -21,8 +21,13 @@ async function setcorrect_answer(s_ans) {
     { email: s_ans.Email },
     { $push: { scoreHistory: { score: currentScore } } }
   );
-// send all user data 
-  return { Email: s_ans.Email, SubmitAnswers: answers };
+  // send all user data
+  return {
+    Email: s_ans.Email,
+    CorrectAnswers: answers,
+    Score: currentScore,
+    SubmitAnswers: s_ans.SubmitAnswers,
+  };
 }
 
 const submitAnswers = async (req, res, next) => {
