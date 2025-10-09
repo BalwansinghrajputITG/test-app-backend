@@ -10,9 +10,12 @@ const getAllQuestions = async (req, res, next) => {
     res.status(200).json(Questions);
     console.log(Questions);
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
+
+//@desc get all question by id
+//route /id/<Q001> method get
 const getQuestionByID = async (req, res, next) => {
   try {
     const Q_id = req.params.id;
@@ -32,6 +35,9 @@ const getQuestionByID = async (req, res, next) => {
       });
     }
     return res.status(200).json(ans_id);
-  } catch (error) {}
+  }
+  catch (error) {
+    next(error);
+  }
 };
 module.exports = { getAllQuestions, getQuestionByID };

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 const express = require('express');
 
@@ -26,20 +27,23 @@ mongoose.connect(process.env.DATABASE_URL).then(()=>{
 })
 
 
+=======
+>>>>>>> 9fbab18a0b8edd98c259d9b509a0b57f016b24cb
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const authRouter = require("./routes/authRouter");
+const questionRouter = require("./routes/questionRouter");
+const cors = require("cors");
+const { default: mongoose } = require("mongoose");
+const app = express();
+app.use(cors());
+require("dotenv").config();
+app.use(express.json());
 app.use(cookieParser());
 app.use(express.json());
-
-// app.use("/", (req, res, next) => {
-//   res.send("hello word");
-// });
-
+ 
 app.use("/api/auth/user", authRouter);
-app.use(express.json())
-
-
+app.use("/question" , questionRouter);
+app.use(express.json());
 
 module.exports = app;
-
