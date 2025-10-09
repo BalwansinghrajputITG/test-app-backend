@@ -42,6 +42,7 @@ exports.registerUser = async (req, res) => {
       _id: newUser._id,
       email: newUser.email,
       userClass: newUser.userClass,
+      fullName : newUser.fullName,
       token,
     },
   });
@@ -83,6 +84,7 @@ exports.loginUser = async (req, res) => {
       _id: myUser._id,
       email: myUser.email,
       userClass: myUser.userClass,
+      fullName : myUser.fullName,
       token,
     },
   });
