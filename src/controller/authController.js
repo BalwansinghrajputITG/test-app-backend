@@ -43,7 +43,6 @@ exports.registerUser = async (req, res) => {
       email: newUser.email,
       fullName: newUser.fullName,
       userClass: newUser.userClass,
-      scoreHistory: newUser.scoreHistory,
       token,
     },
   });
@@ -121,6 +120,7 @@ exports.dashboard = async (req, res) => {
       userClass: myUser.userClass,
       scoreHistory: myUser.scoreHistory,
       phoneNumber: myUser.phoneNumber,
+      role: myUser.role,
     },
   });
 };
