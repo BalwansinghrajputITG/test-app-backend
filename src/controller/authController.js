@@ -202,3 +202,23 @@ exports.UsersFetchingData = async (req, res, next) => {
     next(error);
   }
 }
+
+
+exports.updateUser = async (req, res) => {
+    const {_id ,...updatedata} = req.body ;
+    if (!_id) {
+        return res.status(400).json('Fiead Id is require for process') 
+    }   
+
+    try {
+        const updateUser = await User.findByIdAndUpdate(_id , updatedata,{new :true})
+
+        if (!updateUser) {
+            return res.status(400).json({message : "User Not Found"})
+        }
+        res.json(updateUser)
+    } catch (error) {
+        console.log(error);
+        
+    }
+}
