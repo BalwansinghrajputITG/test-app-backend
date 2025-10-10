@@ -228,6 +228,23 @@ exports.updateUser = async (req, res) => {
   }
 };
 
+exports.FindUser = async (req, res, next) => {
+  try {
+    const userEmaill = await User.findOne({ email: req.body.email });
+    console.log(userEmaill);
+
+    if (!userEmaill) {
+      return res.status(404).json({ msg: "User Not Found" });
+    } else {
+      res
+        .status(200)
+        .json({ msg: "User Found Successfully", user: userEmaill });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 
 exports.getLeaderBord = async (req, res) => {
