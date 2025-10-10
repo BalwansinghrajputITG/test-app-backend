@@ -33,6 +33,10 @@ const answersschems = mongoose.Schema({
   Score: {
     type: Number,
   },
+  Submited_on: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 const Ans = mongoose.model("answer", answersschems);
