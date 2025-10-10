@@ -138,6 +138,7 @@ exports.UsersFetchingData = async (req, res, next) => {
   }
 }
 
+<<<<<<< HEAD
 exports.AddAdmin = async (req, res, next) => {
   try {
     const { fullName, email, phoneNumber, password } = req.body;
@@ -177,3 +178,24 @@ exports.AddAdmin = async (req, res, next) => {
     next(error);
   }
 };
+=======
+
+exports.updateUser = async (req, res) => {
+    const {_id ,...updatedata} = req.body ;
+    if (!_id) {
+        return res.status(400).json('Fiead Id is require for process') 
+    }   
+
+    try {
+        const updateUser = await User.findByIdAndUpdate(_id , updatedata,{new :true})
+
+        if (!updateUser) {
+            return res.status(400).json({message : "User Not Found"})
+        }
+        res.json(updateUser)
+    } catch (error) {
+        console.log(error);
+        
+    }
+}
+>>>>>>> b1e2f17beb1153f43d6832ddf14e14640cf7633e
