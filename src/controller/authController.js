@@ -124,3 +124,15 @@ exports.dashboard = async (req, res) => {
     },
   });
 };
+exports.UsersFetchingData = async (req,res,next) => {
+  try {
+    const {role} = req.body;
+    const Users = await User.find({role:role});
+    res.json({
+      message : 'Fetched' ,
+      Users
+    });
+  } catch (error) {
+    next(error);
+  }
+}
