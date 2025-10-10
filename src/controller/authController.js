@@ -43,6 +43,7 @@ exports.registerUser = async (req, res) => {
       email: newUser.email,
       fullName: newUser.fullName,
       userClass: newUser.userClass,
+      scoreHistory: newUser.scoreHistory,
       token,
     },
   });
@@ -119,20 +120,60 @@ exports.dashboard = async (req, res) => {
       fullName: myUser.fullName,
       userClass: myUser.userClass,
       scoreHistory: myUser.scoreHistory,
-      phoneNumber: myUser.phoneNumber,
-      role: myUser.role,
+      phoneNumber: myUser.phoneNumber
     },
   });
 };
-exports.UsersFetchingData = async (req,res,next) => {
+
+exports.UsersFetchingData = async (req, res, next) => {
   try {
-    const {role} = req.body;
-    const Users = await User.find({role:role});
+    const { role } = req.body;
+    const Users = await User.find({ role: role });
     res.json({
-      message : 'Fetched' ,
+      message: 'Fetched',
       Users
     });
   } catch (error) {
     next(error);
   }
 }
+
+exports.AddAdmin = async (req, res, next) => {
+  try {
+    const { fullName, email, phoneNumber, password } = req.body;
+
+    const userEamilAllreadyExixt = await User.findOne({ email });
+    const userPhoneNumberAllreadyExixt = await User.findOne({ phoneNumber });
+
+    if (userEamilAllreadyExixt || userPhoneNumberAllreadyExixt) {
+      return res.status(400).json({
+        msg: "Admin allready esixt",
+      });
+    }
+
+    const hashPassword = await bcrypt.hash(password, 10);
+
+    const newUser = await User.create({
+      fullName,
+      email,
+      phoneNumber,
+      userClass: 12,
+      password: hashPassword,
+      role: "admin",
+    });
+
+
+    res.status(201).json({
+      message: "Admin created successfully",
+      user: {
+        fullName: newUser.fullName,
+        email: newUser.email,
+        phoneNumber: newUser.phoneNumber,
+        role: newUser.role,
+        userClass: newUser.userClass,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
