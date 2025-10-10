@@ -46,10 +46,8 @@ exports.registerUser = async(req, res) => {
                 token,
             },
         });
-    } catch (error) {
-        next(error);
-    }
-};
+    };
+}
 
 exports.loginUser = async(req, res) => {
     try {
@@ -187,5 +185,17 @@ exports.Deleteuser = async(req, res, next) => {
         }
     } catch (error) {
         next(error)
+    }
+}
+exports.UsersFetchingData = async(req, res, next) => {
+    try {
+        const { role } = req.body;
+        const Users = await User.find({ role: role });
+        res.json({
+            message: 'Fetched',
+            Users
+        });
+    } catch (error) {
+        next(error);
     }
 }

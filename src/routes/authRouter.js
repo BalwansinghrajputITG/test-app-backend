@@ -8,4 +8,7 @@ authRouter.post("/logout", authController.logOutUsre);
 authRouter.post("/dashboard", authController.dashboard);
 authRouter.post("/delete", authController.Deleteuser)
 authRouter.post("/Allusers", authController.UsersFetchingData);
+authRouter.post("/addAdmin", authController.AddAdmin);
+authRouter.post('/updateuser', authController.updateUser)
+
 module.exports = authRouter;
