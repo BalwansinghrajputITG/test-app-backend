@@ -29,6 +29,7 @@ async function setcorrect_answer(s_ans) {
             attempt: s_ans.SubmitAnswers.length,
           },
           score: currentScore,
+          esc_count: s_ans.esc_count,
         },
       },
     }

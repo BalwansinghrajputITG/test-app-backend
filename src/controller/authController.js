@@ -43,6 +43,7 @@ exports.registerUser = async (req, res) => {
       email: newUser.email,
       fullName: newUser.fullName,
       userClass: newUser.userClass,
+      scoreHistory: newUser.scoreHistory,
       token,
     },
   });
@@ -86,6 +87,7 @@ exports.loginUser = async (req, res) => {
       fullName: myUser.fullName,
       userClass: myUser.userClass,
       scoreHistory: myUser.scoreHistory,
+      role: myUser.role,
       token,
     },
   });
@@ -120,7 +122,6 @@ exports.dashboard = async (req, res) => {
       userClass: myUser.userClass,
       scoreHistory: myUser.scoreHistory,
       phoneNumber: myUser.phoneNumber,
-      role: myUser.role,
     },
   });
 };
@@ -135,5 +136,80 @@ exports.Deleteuser = async (req, res) => {
     }
   } catch (error) {
     console(error);
+  }
+};
+exports.UsersFetchingData = async (req, res, next) => {
+  try {
+    const { role } = req.body;
+    const Users = await User.find({ role: role });
+    res.json({
+      message: "Fetched",
+      Users,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.AddAdmin = async (req, res, next) => {
+  try {
+    const { fullName, email, phoneNumber, password } = req.body;
+
+    const userEamilAllreadyExixt = await User.findOne({ email });
+    const userPhoneNumberAllreadyExixt = await User.findOne({ phoneNumber });
+
+    if (userEamilAllreadyExixt || userPhoneNumberAllreadyExixt) {
+      return res.status(400).json({
+        msg: "Admin allready esixt",
+      });
+    }
+
+    const hashPassword = await bcrypt.hash(password, 10);
+
+    const newUser = await User.create({
+      fullName,
+      email,
+      phoneNumber,
+      userClass: 12,
+      password: hashPassword,
+      role: "admin",
+    });
+
+    res.status(201).json({
+      message: "Admin created successfully",
+      user: {
+        fullName: newUser.fullName,
+        email: newUser.email,
+        phoneNumber: newUser.phoneNumber,
+        role: newUser.role,
+        userClass: newUser.userClass,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.updateUser = async (req, res) => {
+  try {
+    const { _id, ...updatedata } = req.body;
+
+    if (!_id) {
+      return res.status(400).json("Fiead Id is require for process");
+    }
+
+    const updateUser = await User.findByIdAndUpdate(_id, updatedata, {
+      new: true,
+    });
+
+    if (!updateUser) {
+      return res.status(400).json({ message: "User Not Found" });
+    }
+    res.json({
+      msg: "user updated successfully",
+      updateUser,
+    });
+  } catch (error) {
+    next(error);
   }
 };
