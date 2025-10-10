@@ -124,3 +124,16 @@ exports.dashboard = async (req, res) => {
     },
   });
 };
+
+exports.Deleteuser = async (req, res) => {
+  try {
+    const deletedUser = await User.findByIdAndDelete(req.body._id);
+    if (!deletedUser) {
+      return res.status(404).json({ msg: "User Not Found" });
+    } else {
+      res.status(200).json({ msg: "User Deleted Successfully" });
+    }
+  } catch (error) {
+    console(error);
+  }
+};
