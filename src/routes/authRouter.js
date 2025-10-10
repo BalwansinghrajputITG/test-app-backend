@@ -6,5 +6,5 @@ authRouter.post("/register", authController.registerUser);
 authRouter.post("/login", authController.loginUser);
 authRouter.post("/logout", authController.logOutUsre);
 authRouter.post("/dashboard", authController.dashboard);
-
+authRouter.post("/delete", authController.Deleteuser)
 module.exports = authRouter;
