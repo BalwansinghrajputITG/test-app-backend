@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-
-=======
->>>>>>> 0503c31695b4569f6477ca51b7764a33cb15ea06
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const authRouter = require("./routes/authRouter");
