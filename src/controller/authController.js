@@ -1,5 +1,4 @@
 const User = require("../model/authModel");
-const Answers = require("../model/leaderModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
@@ -247,15 +246,3 @@ exports.FindUser = async (req, res, next) => {
 };
 
 
-
-exports.getLeaderBord = async (req, res) => {
-  try {
-    let users = await Answers.find();
-    users = users.sort((a,b) => b.Score - a.Score);
-
-    res.json(users)
-  } catch (error) {
-    console.log(error);
-  }
-
-}
