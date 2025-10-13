@@ -1,5 +1,4 @@
 const User = require("../model/authModel");
-const Answers = require("../model/leaderModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
@@ -7,7 +6,7 @@ require("dotenv").config();
 const jwtToken = process.env.JWT_S;
 
 exports.registerUser = async (req, res) => {
-  const { fullName, email, phoneNumber, userClass, password , role } = req.body;
+  const { fullName, email, phoneNumber, userClass, password, role } = req.body;
 
   const userEamilAllreadyExixt = await User.findOne({ email });
   const userPhoneNumberAllreadyExixt = await User.findOne({ phoneNumber });
@@ -49,6 +48,7 @@ exports.registerUser = async (req, res) => {
       role: newUser.role,
       token,
     },
+    success: true
   });
 };
 
@@ -141,6 +141,7 @@ exports.Deleteuser = async (req, res) => {
     console(error);
   }
 };
+
 exports.UsersFetchingData = async (req, res, next) => {
   try {
     const { role } = req.body;
@@ -249,10 +250,22 @@ exports.FindUser = async (req, res, next) => {
 
 
 
+
 exports.getLeaderBord = async (req, res) => {
   try {
     let users = await User.find();
-    users = users.sort((a,b) => b.Score - a.Score);
+    users = users.filter(item => {
+      return (item.scoreHistory.length > 0)
+    });
+
+    for (const user of users) {
+      user.totalScore = 0;
+      for (const scoreObj of user.scoreHistory) {
+        user.totalScore += scoreObj.score;
+      }
+    }
+
+    users = users.sort((a, b) => b.totalScore - a.totalScore);
 
     res.json(users)
   } catch (error) {
@@ -260,3 +273,4 @@ exports.getLeaderBord = async (req, res) => {
   }
 
 }
+
