@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 
 const userSchema = mongoose.Schema(
   {
+    image: {
+      type: String,
+    },
+
     fullName: {
       type: String,
       required: true,
