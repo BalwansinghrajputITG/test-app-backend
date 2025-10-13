@@ -7,7 +7,7 @@ require("dotenv").config();
 const jwtToken = process.env.JWT_S;
 
 exports.registerUser = async (req, res) => {
-  const { fullName, email, phoneNumber, userClass, password } = req.body;
+  const { fullName, email, phoneNumber, userClass, password , role } = req.body;
 
   const userEamilAllreadyExixt = await User.findOne({ email });
   const userPhoneNumberAllreadyExixt = await User.findOne({ phoneNumber });
@@ -26,6 +26,7 @@ exports.registerUser = async (req, res) => {
     phoneNumber,
     userClass,
     password: hashPassword,
+    role,
   });
 
   const token = jwt.sign(
@@ -45,6 +46,7 @@ exports.registerUser = async (req, res) => {
       fullName: newUser.fullName,
       userClass: newUser.userClass,
       scoreHistory: newUser.scoreHistory,
+      role: newUser.role,
       token,
     },
   });
@@ -249,7 +251,7 @@ exports.FindUser = async (req, res, next) => {
 
 exports.getLeaderBord = async (req, res) => {
   try {
-    let users = await Answers.find();
+    let users = await User.find();
     users = users.sort((a,b) => b.Score - a.Score);
 
     res.json(users)
