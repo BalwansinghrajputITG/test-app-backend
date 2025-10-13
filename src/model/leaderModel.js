@@ -6,6 +6,6 @@ const leaderSchema = mongoose.Schema({
 });
 
 
-const LeaderModel = mongoose.model("Leaders", leaderSchema , "answe          rs");
+const LeaderModel = mongoose.model("Leaders", leaderSchema , "answers");
 
 module.exports = LeaderModel;
