@@ -1,4 +1,5 @@
 const User = require("../model/authModel");
+const Answers = require("../model/leaderModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
@@ -191,25 +192,38 @@ exports.AddAdmin = async (req, res, next) => {
   }
 };
 
+
+
 exports.updateUser = async (req, res) => {
   try {
-    const { _id, ...updatedata } = req.body;
+    const { _id, oldPassword, ...updatedata } = req.body;
+    const { email } = req.body;
+    const checkPassword = await User.findOne({
+      email
+    });
 
+    let updateUser;
+    const newPassword = await bcrypt.compare(oldPassword, checkPassword.password)
+    console.log(oldPassword, newPassword);
     if (!_id) {
       return res.status(400).json("Fiead Id is require for process");
     }
 
-    const updateUser = await User.findByIdAndUpdate(_id, updatedata, {
-      new: true,
-    });
+    if (newPassword) {
+      updateUser = await User.findByIdAndUpdate(_id, updatedata, {
+        new: true,
+      });
 
-    if (!updateUser) {
-      return res.status(400).json({ message: "User Not Found" });
+      if (!updateUser) {
+        return res.status(400).json({ message: "User Not Found" });
+      }
+
+      return res.json({
+        msg: "user updated successfully",
+        updateUser,
+      });
     }
-    res.json({
-      msg: "user updated successfully",
-      updateUser,
-    });
+    return res.json({ "password": "missmatch" })
   } catch (error) {
     next(error);
   }
@@ -231,3 +245,17 @@ exports.FindUser = async (req, res, next) => {
     next(error);
   }
 };
+
+
+
+exports.getLeaderBord = async (req, res) => {
+  try {
+    let users = await Answers.find();
+    users = users.sort((a,b) => b.Score - a.Score);
+
+    res.json(users)
+  } catch (error) {
+    console.log(error);
+  }
+
+}
