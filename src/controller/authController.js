@@ -6,7 +6,7 @@ require("dotenv").config();
 const jwtToken = process.env.JWT_S;
 
 exports.registerUser = async (req, res) => {
-  const { fullName, email, phoneNumber, userClass, password, role } = req.body;
+  const { fullName, email, phoneNumber, userClass, password } = req.body;
 
   const userEamilAllreadyExixt = await User.findOne({ email });
   const userPhoneNumberAllreadyExixt = await User.findOne({ phoneNumber });
@@ -25,13 +25,11 @@ exports.registerUser = async (req, res) => {
     phoneNumber,
     userClass,
     password: hashPassword,
-    role,
   });
 
-  const token = jwt.sign(
-    {
-      id: newUser._id,
-    },
+  const token = jwt.sign({
+    id: newUser._id,
+  },
     jwtToken
   );
 
@@ -45,10 +43,8 @@ exports.registerUser = async (req, res) => {
       fullName: newUser.fullName,
       userClass: newUser.userClass,
       scoreHistory: newUser.scoreHistory,
-      role: newUser.role,
       token,
     },
-    success: true
   });
 };
 
@@ -59,11 +55,6 @@ exports.loginUser = async (req, res) => {
     email,
   });
 
-  if (!myUser) {
-    return res.status(400).json({
-      msg: "invalid email or password",
-    });
-  }
 
   const invalidPassword = await bcrypt.compare(password, myUser.password);
 
@@ -73,10 +64,9 @@ exports.loginUser = async (req, res) => {
     });
   }
 
-  const token = jwt.sign(
-    {
-      id: myUser._id,
-    },
+  const token = jwt.sign({
+    id: myUser._id,
+  },
     jwtToken
   );
 
@@ -94,7 +84,8 @@ exports.loginUser = async (req, res) => {
       token,
     },
   });
-};
+}
+
 
 exports.logOutUsre = async (req, res) => {
   res.clearCookie("token");
@@ -104,6 +95,7 @@ exports.logOutUsre = async (req, res) => {
 };
 
 exports.dashboard = async (req, res) => {
+
   const { email } = req.body;
 
   const myUser = await User.findOne({
@@ -141,7 +133,6 @@ exports.Deleteuser = async (req, res) => {
     console(error);
   }
 };
-
 exports.UsersFetchingData = async (req, res, next) => {
   try {
     const { role } = req.body;
@@ -194,9 +185,48 @@ exports.AddAdmin = async (req, res, next) => {
   }
 };
 
+exports.updateUser = async (req, res) => {
+  try {
+    const { _id, ...updatedata } = req.body;
+
+    if (!_id) {
+      return res.status(400).json("Fiead Id is require for process");
+    }
+
+    const updateUser = await User.findByIdAndUpdate(_id, updatedata, {
+      new: true,
+    });
+
+    if (!updateUser) {
+      return res.status(400).json({ message: "User Not Found" });
+    }
+    res.json({
+      msg: "user updated successfully",
+      updateUser,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+exports.FindUser = async (req, res, next) => {
+  try {
+    const userEmaill = await User.findOne({ email: req.body.email });
+    console.log(userEmaill);
+
+    if (!userEmaill) {
+      return res.status(404).json({ msg: "User Not Found" });
+    } else {
+      res
+        .status(200)
+        .json({ msg: "User Found Successfully", user: userEmaill });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
 
 
-exports.updateUser = async (req, res,next) => {
+exports.updateUser = async (req, res) => {
   try {
     const { _id, oldPassword, ...updatedata } = req.body;
     const { email } = req.body;
@@ -251,27 +281,28 @@ exports.FindUser = async (req, res, next) => {
 
 
 
+
 exports.getLeaderBord = async (req, res, next) => {
   try {
     let users = await User.find();
-    users = users.filter(item => {
-      return (item.scoreHistory.length > 0)
-    });
 
-    for (const user of users) {
-      user.totalScore = 0;
-      for (const scoreObj of user.scoreHistory) {
-        user.totalScore += scoreObj.score;
+    users = users.filter(user => user.scoreHistory.length > 0);
+
+    for (let user of users) {
+      let total = 0;
+      for (let record of user.scoreHistory) {
+        total += record.score;
       }
+      user.totalScore = total; // add totalScore property
     }
 
+    // Sort descending by totalScore
     users = users.sort((a, b) => b.totalScore - a.totalScore);
-    console.log(users[0].totalScore);
-    
-    res.json(users)
+
+    res.json(users);
+
   } catch (error) {
-    next(error)
+    console.log(error);
+    next(error);
   }
-
 }
-
