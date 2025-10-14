@@ -1,5 +1,4 @@
 const User = require("../model/authModel");
-const Answers = require("../model/leaderModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
@@ -281,6 +280,7 @@ exports.FindUser = async(req, res, next) => {
         next(error);
     }
 };
+
 
 
 
