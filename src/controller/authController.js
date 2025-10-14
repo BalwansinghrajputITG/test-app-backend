@@ -196,7 +196,7 @@ exports.AddAdmin = async (req, res, next) => {
 
 
 
-exports.updateUser = async (req, res) => {
+exports.updateUser = async (req, res,next) => {
   try {
     const { _id, oldPassword, ...updatedata } = req.body;
     const { email } = req.body;
@@ -251,7 +251,7 @@ exports.FindUser = async (req, res, next) => {
 
 
 
-exports.getLeaderBord = async (req, res) => {
+exports.getLeaderBord = async (req, res, next) => {
   try {
     let users = await User.find();
     users = users.filter(item => {
@@ -266,10 +266,11 @@ exports.getLeaderBord = async (req, res) => {
     }
 
     users = users.sort((a, b) => b.totalScore - a.totalScore);
-
+    console.log(users[0].totalScore);
+    
     res.json(users)
   } catch (error) {
-    console.log(error);
+    next(error)
   }
 
 }
