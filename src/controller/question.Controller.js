@@ -51,12 +51,21 @@ const getQuestionByID = async(req, res, next) => {
 // CorrectAnswerID : "0-3"
 // }
 async function postQuestionProcess(que) {
-    const questionsLength = await Que.countDocuments();
-    const questionID = "Q" + String(questionsLength + 1).padStart(3, 0);
+    let questionsLength = await Que.countDocuments();
+
+    while (true) {
+        let check = "Q" + String(questionsLength + 1).padStart(3, "0");
+        let questionID_unique = await Que.findOne({
+            QuestionID: check,
+        });
+        if (!questionID_unique) break;
+        questionsLength += 1;
+    }
+    const questionID = "Q" + String(questionsLength + 1).padStart(3, "0");
 
     const A_ID = que.Answers.map(
         (value, index) =>
-        "A" + String((questionsLength + 1) * 4 - index).padStart(3, 0)
+        "A" + String((questionsLength + 1) * 4 - index).padStart(3, "0")
     );
     A_ID.reverse();
     let C_A_ID = A_ID[+que.CorrectAnswerID];
@@ -75,17 +84,25 @@ async function postQuestionProcess(que) {
 const postQuestion = async(req, res, next) => {
     try {
         const Check_for_Dupli = await Que.findOne({ Question: req.body.Question });
-        if (!req.body || !req.body.Question || !req.body.Answers || (req.body.Answers.length <= 3)) {
-            return res.status(400).json({ message: "dosn't understant the req body or the body have some missing filld's" });
+        if (!req.body ||
+            !req.body.Question ||
+            !req.body.Answers ||
+            req.body.Answers.length <= 3
+        ) {
+            return res.status(400).json({
+                message: "dosn't understant the req body or the body have some missing filld's",
+            });
         } else if (Check_for_Dupli) {
             return res.status(409).json({ message: "Question already exists" });
         } else if (!(req.body.CorrectAnswerID <= 3 && req.body.CorrectAnswerID >= 0)) {
-            return res.status(202).json({ message: "enter valid answer id 0=> & <=3" });
+            return res
+                .status(202)
+                .json({ message: "enter valid answer id 0=> & <=3" });
         }
         const newQuestion = await postQuestionProcess(req.body);
         const setQuestion = await Que(newQuestion);
         const response = await setQuestion.save();
-        res.status(201).json(setQuestion);
+        res.status(201).json({ message: "Question set successfully", setQuestion });
     } catch (error) {
         next(error);
     }
@@ -93,35 +110,25 @@ const postQuestion = async(req, res, next) => {
 // const editQuestion = async(req, res, next) => {
 //     try {
 
-//         const Q_id = req.body.QuestionID;
-//         const updates = req.body;
-
-
-//         if (!Q_id) {
-//             return res.status(400).json({
-//                 message: "Invalid Question ID",
-//             });
-//         }
-
-//         const updatedQuestion = await Que.findOneAndUpdate({ QuestionID: Q_id }, { $set: updates }, { new: true });
-//         console.log(updatedQuestion);
-
-//         if (!updatedQuestion) {
-//             return res.status(404).json({
-//                 message: "Question not found",
-//             });
-//         }
-
-//         return res.status(200).json({
-//             message: "Question updated successfully",
-//             data: updatedQuestion,
-//         });
-//     } catch (error) {
-//         next(error);
-//     }
-// };
-
-
-
-
-module.exports = { getAllQuestions, getQuestionByID, postQuestion };
+const deleteQuestion = async(req, res, next) => {
+    try {
+        if (!req.body.QuestionID) {
+            return res.status(400).json({ message: "Provide a QuestionID" });
+        }
+        const Del_Q = await Que.findOneAndDelete({
+            QuestionID: req.body.QuestionID,
+        });
+        if (!Del_Q) {
+            return res.status(404).json({ message: "question not found" });
+        }
+        res.status(200).json({ message: "Question deleted successfully" });
+    } catch (error) {
+        next(error);
+    }
+};
+module.exports = {
+    getAllQuestions,
+    getQuestionByID,
+    postQuestion,
+    deleteQuestion,
+};

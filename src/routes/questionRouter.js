@@ -3,7 +3,7 @@ const {
     getAllQuestions,
     getQuestionByID,
     postQuestion,
-    editQuestion,
+    deleteQuestion,
 } = require("../controller/question.Controller");
 const submitAnswers = require("../controller/answer.controller");
 const routes = express.Router();
@@ -21,7 +21,9 @@ routes.route("/submit_answer").post(submitAnswers);
 routes.route("/post/new-question").post(postQuestion);
 // routes.route("/edit-question").put(editQuestion);
 
-//Default URL Error
+//POST delete by id
+routes.route("/delete-question").post(deleteQuestion)
+    //Default URL Error
 routes.route("/").get((req, res, next) => {
     res.status(200).json({ message: "please enter correct url" });
 });
