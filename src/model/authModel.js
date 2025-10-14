@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 
 const userSchema = mongoose.Schema(
   {
+    image: {
+      type: String,
+    },
+
     fullName: {
       type: String,
       required: true,
@@ -40,6 +44,10 @@ const userSchema = mongoose.Schema(
         submitedON: {
           type: Date,
           default: Date.now,
+        },
+        esc_count: {
+          type: Number,
+          required: true,
         },
       },
     ],
