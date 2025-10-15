@@ -4,8 +4,9 @@
 
 const { default: mongoose } = require("mongoose");
 const Que = require("../model/questionModel");
+const Attempt = require('../models/Attempt');
 
-const getAllQuestions = async(req, res, next) => {
+const getAllQuestions = async (req, res, next) => {
     try {
         const Questions = await Que.find({}, { CorrectAnswerID: 0 });
         res.status(200).json(Questions);
@@ -16,7 +17,7 @@ const getAllQuestions = async(req, res, next) => {
 
 //@desc get all question by id
 //route /id/<Q001> method get
-const getQuestionByID = async(req, res, next) => {
+const getQuestionByID = async (req, res, next) => {
     try {
         const Q_id = req.params.id;
 
@@ -65,7 +66,7 @@ async function postQuestionProcess(que) {
 
     const A_ID = que.Answers.map(
         (value, index) =>
-        "A" + String((questionsLength + 1) * 4 - index).padStart(3, "0")
+            "A" + String((questionsLength + 1) * 4 - index).padStart(3, "0")
     );
     A_ID.reverse();
     let C_A_ID = A_ID[+que.CorrectAnswerID];
@@ -81,7 +82,7 @@ async function postQuestionProcess(que) {
     return FinalQuestionOBJ;
 }
 
-const postQuestion = async(req, res, next) => {
+const postQuestion = async (req, res, next) => {
     try {
         const Check_for_Dupli = await Que.findOne({ Question: req.body.Question });
         if (!req.body ||
@@ -110,7 +111,7 @@ const postQuestion = async(req, res, next) => {
 // const editQuestion = async(req, res, next) => {
 //     try {
 
-const deleteQuestion = async(req, res, next) => {
+const deleteQuestion = async (req, res, next) => {
     try {
         if (!req.body.QuestionID) {
             return res.status(400).json({ message: "Provide a QuestionID" });
@@ -126,9 +127,70 @@ const deleteQuestion = async(req, res, next) => {
         next(error);
     }
 };
+
+const questionAttempt = async (req, res, next) => {
+    const { userId } = req.body;
+
+    try {
+        const attempts = await Attempt.find({ userId }).lean();
+
+        const questionIds = attempts.map(a => a.questionId);
+        const Quest = await Que.find({
+            QuestID: req.body.QuestionID
+        }).lean();
+
+        const questionMap = {};
+        questions.forEach(q => {
+            questionMap[q._id.toString()] = q;
+        });
+
+        // const mcq_single = [];
+        // const mcq_multiple = [];
+        // const subjective = [];
+
+        for (const attempt of attempts) {
+            const q = questionMap[attempt.questionId];
+
+            if (!q) continue; 
+
+            let isCorrect = null;
+
+         
+            if (q.type === 'mcq_single') {
+                isCorrect = attempt.answer === q.correctAnswer;
+                result.mcq_single.push({ ...attempt, isCorrect });
+            }
+
+            else if (q.type === 'mcq_multiple') {
+               
+                const a1 = Array.isArray(attempt.answer) ? attempt.answer.sort() : [];
+                const a2 = Array.isArray(q.correctAnswer) ? q.correctAnswer.sort() : [];
+                isCorrect = JSON.stringify(a1) === JSON.stringify(a2);
+                result.mcq_multiple.push({ ...attempt, isCorrect });
+            }
+
+            else if (q.type === 'subjective') {
+                
+                isCorrect = null;
+                result.subjective.push({ ...attempt, isCorrect });
+            }
+        }
+
+        res.status(200).json({
+            msg: "Answer submitted successfully !"
+        });
+
+    } catch (err) {
+        next(err)
+    }
+}
+
+
 module.exports = {
     getAllQuestions,
     getQuestionByID,
     postQuestion,
     deleteQuestion,
+    questionAttempt
 };
+
