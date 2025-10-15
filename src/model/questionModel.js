@@ -8,7 +8,7 @@ const Question = mongoose.Schema({
   Question: {
     type: String,
     required: true,
-    unique : true,
+    unique: true,
   },
   Answers: [
     {
@@ -22,6 +22,12 @@ const Question = mongoose.Schema({
   CorrectAnswerID: {
     type: String,
     required: true,
+  },
+
+  QuestionType: {
+    type: String,
+    required: true,
+    default: "mcq",
   },
 });
 

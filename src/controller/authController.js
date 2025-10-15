@@ -27,9 +27,10 @@ exports.registerUser = async (req, res) => {
     password: hashPassword,
   });
 
-  const token = jwt.sign({
-    id: newUser._id,
-  },
+  const token = jwt.sign(
+    {
+      id: newUser._id,
+    },
     jwtToken
   );
 
@@ -55,6 +56,11 @@ exports.loginUser = async (req, res) => {
     email,
   });
 
+  if (!myUser) {
+    return res.status(400).json({
+      msg: "invalid email or password",
+    });
+  }
 
   const invalidPassword = await bcrypt.compare(password, myUser.password);
 
@@ -64,9 +70,10 @@ exports.loginUser = async (req, res) => {
     });
   }
 
-  const token = jwt.sign({
-    id: myUser._id,
-  },
+  const token = jwt.sign(
+    {
+      id: myUser._id,
+    },
     jwtToken
   );
 
@@ -84,8 +91,7 @@ exports.loginUser = async (req, res) => {
       token,
     },
   });
-}
-
+};
 
 exports.logOutUsre = async (req, res) => {
   res.clearCookie("token");
@@ -95,7 +101,6 @@ exports.logOutUsre = async (req, res) => {
 };
 
 exports.dashboard = async (req, res) => {
-
   const { email } = req.body;
 
   const myUser = await User.findOne({
@@ -225,17 +230,19 @@ exports.FindUser = async (req, res, next) => {
   }
 };
 
-
 exports.updateUser = async (req, res) => {
   try {
     const { _id, oldPassword, ...updatedata } = req.body;
     const { email } = req.body;
     const checkPassword = await User.findOne({
-      email
+      email,
     });
 
     let updateUser;
-    const newPassword = await bcrypt.compare(oldPassword, checkPassword.password)
+    const newPassword = await bcrypt.compare(
+      oldPassword,
+      checkPassword.password
+    );
     console.log(oldPassword, newPassword);
     if (!_id) {
       return res.status(400).json("Fiead Id is require for process");
@@ -255,7 +262,7 @@ exports.updateUser = async (req, res) => {
         updateUser,
       });
     }
-    return res.json({ "password": "missmatch" })
+    return res.json({ password: "missmatch" });
   } catch (error) {
     next(error);
   }
@@ -278,32 +285,28 @@ exports.FindUser = async (req, res, next) => {
   }
 };
 
-
-
-
-
-exports.getLeaderBord = async (req, res, next) => {
+exports.getLeaderBord = async (req, res) => {
   try {
-    let users = await User.find();
-
-    users = users.filter(user => user.scoreHistory.length > 0);
-
-    for (let user of users) {
-      let total = 0;
-      for (let record of user.scoreHistory) {
-        total += record.score;
-      }
-      user.totalScore = total; // add totalScore property
-    }
-
-    // Sort descending by totalScore
-    users = users.sort((a, b) => b.totalScore - a.totalScore);
+    let users = await Answers.find();
+    users = users.sort((a, b) => b.Score - a.Score);
 
     res.json(users);
-
   } catch (error) {
     console.log(error);
+  }
+};
+
+exports.getUserById = async (req, res, next) => {
+  try {
+    const { userId } = req.body;
+
+    const user = await User.findOne({ _id: userId });
+
+    res.status(200).json({
+      msg: "user find successfully",
+      user,
+    });
+  } catch (error) {
     next(error);
   }
-}
-
+};
