@@ -27,16 +27,10 @@ exports.registerUser = async (req, res) => {
     password: hashPassword,
   });
 
-<<<<<<< HEAD
   const token = jwt.sign(
     {
       id: newUser._id,
     },
-=======
-  const token = jwt.sign({
-    id: newUser._id,
-  },
->>>>>>> 2ea35ef75993f8984560bd0aaf3c450627085b0f
     jwtToken
   );
 
@@ -62,14 +56,11 @@ exports.loginUser = async (req, res) => {
     email,
   });
 
-<<<<<<< HEAD
   if (!myUser) {
     return res.status(400).json({
       msg: "invalid email or password",
     });
   }
-=======
->>>>>>> 2ea35ef75993f8984560bd0aaf3c450627085b0f
 
   const invalidPassword = await bcrypt.compare(password, myUser.password);
 
@@ -79,16 +70,10 @@ exports.loginUser = async (req, res) => {
     });
   }
 
-<<<<<<< HEAD
   const token = jwt.sign(
     {
       id: myUser._id,
     },
-=======
-  const token = jwt.sign({
-    id: myUser._id,
-  },
->>>>>>> 2ea35ef75993f8984560bd0aaf3c450627085b0f
     jwtToken
   );
 
@@ -106,12 +91,7 @@ exports.loginUser = async (req, res) => {
       token,
     },
   });
-<<<<<<< HEAD
 };
-=======
-}
-
->>>>>>> 2ea35ef75993f8984560bd0aaf3c450627085b0f
 
 exports.logOutUsre = async (req, res) => {
   res.clearCookie("token");
@@ -121,10 +101,6 @@ exports.logOutUsre = async (req, res) => {
 };
 
 exports.dashboard = async (req, res) => {
-<<<<<<< HEAD
-=======
-
->>>>>>> 2ea35ef75993f8984560bd0aaf3c450627085b0f
   const { email } = req.body;
 
   const myUser = await User.findOne({
